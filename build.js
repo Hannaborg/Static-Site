@@ -19,11 +19,19 @@ fs.ensureDirSync('./public/blog');
 // Copy static assets
 fs.copySync('./src/styles', './public/styles');
 
+// Copy index.html directly
+if (fs.existsSync('./src/index.html')) {
+    fs.copySync('./src/index.html', './public/index.html');
+}
+
 // Process pages
 const processPages = (dir, outputDir) => {
     const files = fs.readdirSync(dir);
     
     files.forEach(file => {
+        // Skip processing index.md since we're using direct index.html
+        if (file === 'index.md') return;
+        
         if (path.extname(file) === '.md') {
             const content = fs.readFileSync(path.join(dir, file), 'utf-8');
             const { attributes, body } = frontMatter(content);
